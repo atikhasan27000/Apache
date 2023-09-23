@@ -1,0 +1,42 @@
+# -- Redirect from default 404 pages to custom 404 pages
+ErrorDocument 404 /404
+
+# -- The URL rewriting engine (RewriteEngine) is enabled in the Apache web server configuration
+RewriteEngine on
+
+# -- Redirect HTTP to HTTPS
+RewriteCond %{HTTP} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# -- Removes the .php extension from the page
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^(.*)$ $1.php [NC,L]
+
+# -- Removes the .html extension from the page
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.html -f
+RewriteRule ^(.*)$ $1.html
+
+# -- Return 404 if the original request is .html
+RewriteCond %{THE_REQUEST} "^[^ ]* .*?\.html[? ].*$"
+RewriteRule \.html$ - [R=404]
+
+# -- Return 404 if the original request is .php
+RewriteCond %{THE_REQUEST} "^[^ ]* .*?\.php[? ].*$"
+RewriteRule .* - [l,r=404]
+
+# -- Change the PHP version used
+<IfModule mime_module>
+  AddHandler application/x-httpd-ea-php74 .php .php7 .phtml
+</IfModule>
+
+# ------------------------------------
+RewriteCond %(REQUEST_FILENAME) !-d
+RewriteCond %(REQUEST_FILENAME) !-f
+RewriteCond %(REQUEST_FILENAME) !-l
+# RewriteRule ^websites/([a-zA-Z0-9-]+)$ view?slug=$1 [QSA,L]
+# RewriteRule ^([^/]+)/([a-zA-Z0-9-]+)$ view?slug=$2 [QSA,L]
+
+# RewriteRule ^([^/.]+)$ blog?f=$1 [L]
+# RewriteRule ^([a-zA-Z0-9-/,+]+)$ blog_single [L]

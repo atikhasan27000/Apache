@@ -1,0 +1,19 @@
+RewriteEngine on
+
+# -- Redirect HTTP to HTTPS
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# -- Removes the .php extension from the URL
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^([^\.]+)$ $1.php [NC,L]
+
+# -- Return 404 if the original request contains .php in the URL
+RewriteCond %{THE_REQUEST} "\.php"
+RewriteRule ^ - [L,R=404]
+
+# -- Change the PHP version used
+<IfModule mime_module>
+    AddHandler application/x-httpd-ea-php74 .php .php7 .phtml
+</IfModule>
